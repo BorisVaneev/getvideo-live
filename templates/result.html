@@ -1,40 +1,31 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ lang }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
+    <title>Результаты скачивания</title>
 </head>
 <body>
-    <h1>{{ title }}</h1>
-    <img src="{{ thumbnail }}" alt="Thumbnail" width="320" />
-    <p>Автор: {{ author }}</p>
+    <h1>Видео доступно для скачивания</h1>
 
-    <h3>Выберите качество для скачивания:</h3>
-    <ul>
-        {% for media in medias %}
-        <li>
-            <a href="{{ media.url }}" download="{{ title }}-{{ media.label }}.mp4" class="download-link">
-                Скачать {{ media.label }}
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
+    <div>
+        <h2>{{ title }}</h2>
+        <p>Автор: {{ author }}</p>
+        <img src="{{ thumbnail }}" alt="Thumbnail" width="200">
 
-    <script>
-        // Дополнительно можно использовать скрипт, чтобы принудительно начать загрузку сразу
-        document.querySelectorAll(".download-link").forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                var url = link.getAttribute("href");
-                var fileName = link.getAttribute("download");
-                var a = document.createElement("a");
-                a.href = url;
-                a.download = fileName;
-                a.click();
-            });
-        });
-    </script>
+        <p>Выберите качество для скачивания:</p>
+        <ul>
+            {% for media in medias %}
+                <li>
+                    <a href="{{ media['url'] }}" download="{{ title }}_{{ media['label'] }}.mp4">
+                        Скачать ({{ media['label'] }})
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
 
+        <br>
+        <a href="/" class="back-btn">Назад</a>
+    </div>
 </body>
 </html>
