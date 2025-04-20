@@ -26,6 +26,15 @@
             <p>Не удалось получить ссылки на скачивание. Попробуйте другую ссылку.</p>
         {% endif %}
 
+        <form action="{{ url_for('download') }}" method="post" style="margin-top: 20px;">
+            <label for="url">Ссылка на видео:</label><br>
+            <input type="text" id="url" name="url" placeholder="https://example.com/..." required style="width: 80%; max-width: 500px;"><br><br>
+            <button type="submit">Скачать</button>
+        </form>
+
+        <br>
+        <a href="{{ url_for('index') }}">← Назад на главную</a>
+
         <hr>
         <h3>Отладочная информация:</h3>
         <pre style="white-space: pre-wrap;">{{ result | tojson(indent=2, ensure_ascii=False) }}</pre>
