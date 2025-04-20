@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RapidAPI Playground</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { padding: 8px; margin: 5px 0; width: 100%; }
+    pre { background: #f0f0f0; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+  <h1>🎯 RapidAPI Playground</h1>
+  <p>Введите URL видео (например, TikTok, Twitter и т.д.):</p>
+  
+  <input type="text" id="videoUrl" placeholder="https://www.tiktok.com/@user/video/..." />
+  <button onclick="callRapidAPI()">🔍 Отправить запрос</button>
+  
+  <h2>📦 Результат:</h2>
+  <pre id="output">Ничего пока нет...</pre>
+
+  <script>
+    async function callRapidAPI() {
+      const url = document.getElementById('videoUrl').value;
+      const output = document.getElementById('output');
+      
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-rapidapi-host': 'auto-download-all-in-one.p.rapidapi.com',
+          'x-rapidapi-key': 'aa3d356f13msh3974bc1b6659014p111df9jsn9a452dae36bc'
+        },
+        body: JSON.stringify({ url: url })
+      };
+
+      try {
+        const res = await fetch('https://auto-download-all-in-one.p.rapidapi.com/v1/social/autolink', options);
+        const data = await res.json();
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        output.textContent = '❌ Ошибка запроса:\n' + err;
+      }
+    }
+  </script>
+</body>
+</html>
