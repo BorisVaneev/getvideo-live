@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Скачивание видео</title>
+    <title>Download Video</title>
 </head>
 <body>
-    <h1>Сервисы для скачивания видео</h1>
-
-    <h2>Сервисы на странице {{ lang }}</h2>
+    <h1>Download Videos from {{ page }} - {{ lang }}</h1>
     <ul>
         {% for service in services %}
-        <li><a href="/{{ lang }}/{{ service }}">{{ service }}</a></li>
+            <li><a href="/download/{{ service }}">Download {{ service }}</a></li>
         {% endfor %}
     </ul>
+    <a href="/">Back to Home</a>
 </body>
 </html>
