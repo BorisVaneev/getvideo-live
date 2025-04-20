@@ -1,31 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ video_title }}</title>
+    <title>{{ title }}</title>
 </head>
 <body>
-    <h1>Видео: {{ video_title }}</h1>
-    <img src="{{ video_thumbnail }}" alt="Thumbnail">
+    <h1>{{ title }}</h1>
+    <img src="{{ thumbnail }}" alt="Thumbnail" width="320" />
+    <p>Автор: {{ author }}</p>
 
-    <h2>Выберите качество для скачивания:</h2>
+    <h3>Выберите качество для скачивания:</h3>
     <ul>
-        {% for media in video_medias %}
+        {% for media in medias %}
         <li>
-            <a href="{{ media.url }}" download="{{ video_title }}_{{ media.quality }}.mp4" class="download-link">
-                Скачать {{ media.quality }} ({{ media.format }})
+            <a href="{{ media.url }}" download="{{ title }}-{{ media.label }}.mp4" class="download-link">
+                Скачать {{ media.label }}
             </a>
         </li>
         {% endfor %}
     </ul>
 
-    <br><br>
-    <form method="POST" action="/download">
-        <label for="url">Введите ссылку на видео для скачивания:</label><br>
-        <input type="text" name="url" id="url" placeholder="Введите ссылку">
-        <button type="submit">Скачать</button>
-    </form>
+    <script>
+        // Дополнительно можно использовать скрипт, чтобы принудительно начать загрузку сразу
+        document.querySelectorAll(".download-link").forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                var url = link.getAttribute("href");
+                var fileName = link.getAttribute("download");
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = fileName;
+                a.click();
+            });
+        });
+    </script>
 
 </body>
 </html>
