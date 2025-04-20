@@ -2,45 +2,32 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Результаты загрузки</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результат скачивания</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Результат</h1>
 
-    {% if result.url %}
-        <h2>{{ result.title }}</h2>
-        <p><strong>Источник:</strong> {{ result.source }}</p>
-        {% if result.thumbnail %}
-            <img src="{{ result.thumbnail }}" alt="thumbnail" style="max-width: 300px;">
-        {% endif %}
+    <h1>Видео для скачивания</h1>
 
-        {% if result.medias %}
-            <h3>Ссылки на скачивание:</h3>
-            <ul>
-                {% for item in result.medias %}
-                    <li>
-                        <a href="{{ item.url }}" target="_blank">
-                            Скачать ({{ item.quality or item.label or 'неизвестное качество' }})
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Медиафайлы не найдены.</p>
-        {% endif %}
+    <h2>Название видео: {{ video_title }}</h2>
+    <p>Автор: {{ video_author }}</p>
+    <img src="{{ video_thumbnail }}" alt="Thumbnail" width="200">
+
+    {% if video_url %}
+        <p>Ваше видео доступно для скачивания. Нажмите на ссылку ниже, чтобы начать скачивание:</p>
+        <a href="{{ video_url }}" download="{{ video_title }}.mp4" class="download-link">Скачать видео</a>
     {% else %}
-        <p><strong>Ошибка:</strong> Не удалось получить ссылки на скачивание. Попробуйте другую ссылку.</p>
+        <p>Не удалось получить ссылку для скачивания. Попробуйте другую ссылку.</p>
     {% endif %}
 
-    <hr>
-    <form action="/" method="get">
-        <button type="submit">Назад</button>
+    <form action="/download" method="POST">
+        <label for="url">Введите URL видео для скачивания:</label>
+        <input type="text" id="url" name="url" placeholder="Введите ссылку на видео" required>
+        <button type="submit">Скачать</button>
     </form>
 
-    <details>
-        <summary>Отладочная информация</summary>
-        <pre>{{ result | tojson(indent=2) }}</pre>
-    </details>
+    <p><a href="/">На главную</a></p>
+
 </body>
 </html>
