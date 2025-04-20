@@ -39,6 +39,7 @@ for lang, pages in SERVICES.items():
             return view
         app.add_url_rule(route, f"{lang}_{page}", make_view())
 
+# Страница загрузки
 @app.route('/download', methods=['POST'])
 def download():
     video_url = request.form.get('url')
@@ -55,7 +56,13 @@ def download():
     conn.request("POST", "/v1/social/autolink", payload, headers)
     res = conn.getresponse()
     data = res.read()
-    return render_template("result.html", data=data)
+    
+    # Предположим, что мы получаем данные, которые нужно отобразить
+    try:
+        result = json.loads(data)
+        return render_template("result.html", result=result)
+    except Exception as e:
+        return f"Ошибка обработки данных: {e}"
 
 if __name__ == '__main__':
     app.run(debug=True)
