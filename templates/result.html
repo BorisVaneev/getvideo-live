@@ -1,29 +1,31 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Результат загрузки</title>
+    <title>{{ video_title }}</title>
 </head>
 <body>
-    <h1>Результат загрузки</h1>
+    <h1>Видео: {{ video_title }}</h1>
+    <img src="{{ video_thumbnail }}" alt="Thumbnail">
 
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% else %}
-        <h2>Видео: {{ video_title }}</h2>
-        <img src="{{ thumbnail }}" alt="Thumbnail" width="200">
-        <p>Автор: {{ author }}</p>
+    <h2>Выберите качество для скачивания:</h2>
+    <ul>
+        {% for media in video_medias %}
+        <li>
+            <a href="{{ media.url }}" download="{{ video_title }}_{{ media.quality }}.mp4" class="download-link">
+                Скачать {{ media.quality }} ({{ media.format }})
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
 
-        <!-- Автоматический запуск скачивания -->
-        <a href="{{ download_url }}" download="{{ video_title }}.mp4" id="downloadLink" class="download-link" style="display:none;"></a>
-        
-        <script>
-            // Инициируем автоматический клик по скрытой ссылке для скачивания
-            document.getElementById('downloadLink').click();
-        </script>
+    <br><br>
+    <form method="POST" action="/download">
+        <label for="url">Введите ссылку на видео для скачивания:</label><br>
+        <input type="text" name="url" id="url" placeholder="Введите ссылку">
+        <button type="submit">Скачать</button>
+    </form>
 
-        <p>Загрузка начнется автоматически...</p>
-    {% endif %}
 </body>
 </html>
