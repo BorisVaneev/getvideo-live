@@ -7,6 +7,28 @@ app = Flask(__name__)
 RAPIDAPI_KEY = "aa3d356f13msh3974bc1b6659014p111df9jsn9a452dae36bc"
 RAPIDAPI_HOST = "auto-download-all-in-one.p.rapidapi.com"
 
+# 35 сервисов, делим их на 5 страниц по 7 сервисов на каждой
+services_per_page = [
+    ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
+    ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
+    ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
+    ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
+    ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
+]
+
+# языковые маршруты
+languages = ['ru', 'en', 'es', 'zh']
+
+# Создаем SEO-страницы для каждой страницы с сервисами на всех языках
+for lang in languages:
+    for i, services in enumerate(services_per_page):
+        route = f"/{lang}/page{i+1}"
+        def make_view(services=services, lang=lang):
+            def view():
+                return render_template("seo_page.html", services=services, lang=lang)
+            return view
+        app.add_url_rule(route, f"{lang}_page{i+1}", make_view())
+
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -30,7 +52,7 @@ def download():
     response = json.loads(data.decode("utf-8"))
 
     if 'medias' in response:
-        download_url = response['medias'][0]['url']
+        download_url = response['medias']
         video_title = response['title']
         thumbnail = response.get('thumbnail', '')
         author = response.get('author', 'Неизвестен')
