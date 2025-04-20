@@ -1,17 +1,34 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты скачивания</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Ссылки для скачивания</h1>
+    </header>
 
-{% block content %}
-<h2>Результат загрузки</h2>
+    <main>
+        {% if result.status == 'success' and result.result %}
+            <ul>
+                {% for item in result.result %}
+                    <li>
+                        <a href="{{ item.url }}" target="_blank">
+                            Скачать ({{ item.quality or 'качество неизвестно' }})
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Не удалось получить ссылки на скачивание. Попробуйте другую ссылку.</p>
+        {% endif %}
 
-{% if result.links %}
-  <ul>
-    {% for link in result.links %}
-      <li><a href="{{ link.url }}" target="_blank">{{ link.quality or "Скачать видео" }}</a></li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Не удалось получить ссылки на скачивание. Попробуйте другую ссылку.</p>
-{% endif %}
-
-<a href="/">← Назад</a>
-{% endblock %}
+        <hr>
+        <h3>Отладочная информация:</h3>
+        <pre style="white-space: pre-wrap;">{{ result | tojson(indent=2, ensure_ascii=False) }}</pre>
+    </main>
+</body>
+</html>
