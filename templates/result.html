@@ -7,15 +7,17 @@
 <body>
     <h1>Видео найдено</h1>
 
-    {% if result['data'] %}
-        <p><strong>Название:</strong> {{ result['data']['title'] }}</p>
-        <p><strong>Источник:</strong> {{ result['data']['source'] }}</p>
+    {% if result.error %}
+        <p>{{ result.error }}</p>
+    {% else %}
+        <p><strong>Название:</strong> {{ result.data.title }}</p>
+        <p><strong>Источник:</strong> {{ result.data.source }}</p>
         <p><strong>Скачать:</strong></p>
         <ul>
             {% if medias %}
                 {% for media in medias %}
                     <li>
-                        <a href="{{ media['url'] }}" download>Скачать {{ media['label'] }} ({{ media['quality'] }})</a>
+                        <a href="{{ media.url }}" download>Скачать {{ media.label }} ({{ media.quality }})</a>
                     </li>
                 {% endfor %}
             {% else %}
@@ -23,10 +25,7 @@
             {% endif %}
         </ul>
         <p><strong>Превью:</strong></p>
-        <img src="{{ result['data']['thumbnail'] }}" alt="Превью видео">
-    {% else %}
-        <p>Не удалось получить данные:</p>
-        <pre>{{ result }}</pre>  <!-- Выводим весь результат для отладки -->
+        <img src="{{ result.data.thumbnail }}" alt="Превью видео">
     {% endif %}
 </body>
 </html>
