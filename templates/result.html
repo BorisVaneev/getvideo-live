@@ -3,29 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Результаты скачивания</title>
+    <title>Download Result</title>
 </head>
 <body>
-    <h1>Видео доступно для скачивания</h1>
-
-    <div>
-        <h2>{{ title }}</h2>
-        <p>Автор: {{ author }}</p>
-        <img src="{{ thumbnail }}" alt="Thumbnail" width="200">
-
-        <p>Выберите качество для скачивания:</p>
-        <ul>
-            {% for media in medias %}
-                <li>
-                    <a href="{{ media['url'] }}" download="{{ title }}_{{ media['label'] }}.mp4">
-                        Скачать ({{ media['label'] }})
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-
-        <br>
-        <a href="/" class="back-btn">Назад</a>
-    </div>
+    <h1>Video Download Result</h1>
+    <p>Video details:</p>
+    <pre>{{ data }}</pre>
+    <a href="/">Back to Home</a>
 </body>
 </html>
