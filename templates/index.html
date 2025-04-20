@@ -1,21 +1,39 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница - GetVideo</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
 
-{% block content %}
-<h1>Добро пожаловать на GetVideo.Live</h1>
+    <h1>Добро пожаловать на GetVideo</h1>
+    <p>Введите ссылку на видео, чтобы скачать его:</p>
 
-<form action="/download" method="post" style="margin-bottom: 30px;">
-  <input type="text" name="url" placeholder="Вставьте ссылку на видео" required style="width: 70%; padding: 10px;" />
-  <button type="submit" style="padding: 10px;">Скачать</button>
-</form>
+    <form action="/download" method="POST">
+        <label for="url">Ссылка на видео:</label>
+        <input type="text" id="url" name="url" required>
+        <button type="submit">Скачать</button>
+    </form>
 
-<h2>Выберите группу платформ:</h2>
-<ul>
-  {% for link in links %}
-    <li>
-      <a href="{{ link.url }}">
-        {{ link.lang.upper() }} – {{ link.group }}
-      </a>
-    </li>
-  {% endfor %}
-</ul>
-{% endblock %}
+    <h2>Доступные языки:</h2>
+    <ul>
+        {% for lang in languages %}
+            <li><a href="/{{ lang }}">Перейти на {{ lang.upper() }} страницы</a></li>
+        {% endfor %}
+    </ul>
+
+    <h2>SEO страницы</h2>
+    <ul>
+        {% for lang in languages %}
+            <li><a href="/{{ lang }}/group1">Группа 1 - {{ lang.upper() }}</a></li>
+            <li><a href="/{{ lang }}/group2">Группа 2 - {{ lang.upper() }}</a></li>
+            <li><a href="/{{ lang }}/group3">Группа 3 - {{ lang.upper() }}</a></li>
+            <li><a href="/{{ lang }}/group4">Группа 4 - {{ lang.upper() }}</a></li>
+            <li><a href="/{{ lang }}/group5">Группа 5 - {{ lang.upper() }}</a></li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
