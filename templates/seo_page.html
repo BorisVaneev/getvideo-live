@@ -1,12 +1,19 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO страницы</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Выберите сервис для скачивания видео</h1>
+    <ul>
+        {% for service in services %}
+            <li><a href="/{{ lang }}/{{ service }}">{{ service }}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="/">На главную</a>
+</body>
+</html>
 
-{% block content %}
-<h1>Платформы для загрузки</h1>
-<ul>
-  {% for service in services %}
-    <li>{{ service }}</li>
-  {% endfor %}
-</ul>
-
-<a href="/">← На главную</a>
-{% endblock %}
