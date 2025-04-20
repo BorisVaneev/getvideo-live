@@ -66,11 +66,17 @@ def download():
 
         result = json.loads(data)
 
-        # Фильтруем медиаданные для передачи в шаблон
+        # Проверим, если медиа доступно для скачивания
         medias = result.get('medias', [])
+        if not medias:
+            return render_template("result.html", result={"error": "Видео недоступно для скачивания"})
 
-        # Проверяем, если медиа есть, то передаем в шаблон
-        return render_template("result.html", result={"data": result, "medias": medias})
+        # Если есть доступные медиа, показываем кнопку для скачивания
+        video_url = medias[0].get('url', '')
+        if video_url:
+            return render_template("result.html", result={"data": result, "medias": medias, "download_url": video_url})
+        else:
+            return render_template("result.html", result={"error": "Видео не доступно для скачивания"})
 
     except Exception as e:
         print("🔥 Ошибка при обработке запроса:")
