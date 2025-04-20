@@ -11,28 +11,28 @@
     <p>Video URL: {{ result['url'] }}</p>
     <p>Author: {{ result['author'] }}</p>
     <p>Thumbnail: <img src="{{ result['thumbnail'] }}" alt="Thumbnail"></p>
+    
     <h3>Available Formats:</h3>
     <ul>
         {% for media in result['medias'] %}
             <li>
-                <!-- Скрытая ссылка для автоматического скачивания -->
-                <a href="{{ media['url'] }}" 
-                   download="{{ result['title'] }} - {{ media['label'] }}" 
-                   id="downloadLink-{{ loop.index }}" 
-                   class="download-link" 
-                   style="display:none;">
+                <!-- Кнопка для скачивания, имитирующая клик -->
+                <button onclick="startDownload('{{ media['url'] }}', '{{ result['title'] }} - {{ media['label'] }}')">
                     Download {{ media['label'] }}
-                </a>
+                </button>
             </li>
         {% endfor %}
     </ul>
 
     <script>
-        // Находим первую ссылку для скачивания и кликаем по ней
-        let downloadLink = document.querySelector('.download-link');
-        if (downloadLink) {
-            // Автоматический клик по первой ссылке для скачивания
-            downloadLink.click();
+        function startDownload(url, filename) {
+            // Создаём элемент ссылки для скачивания
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = filename;  // Устанавливаем имя файла для скачивания
+            document.body.appendChild(link);
+            link.click();  // Симулируем клик по ссылке
+            document.body.removeChild(link);  // Убираем ссылку после клика
         }
     </script>
 
