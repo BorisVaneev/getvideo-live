@@ -3,36 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Результат скачивания</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Результат загрузки</title>
 </head>
 <body>
+    <h1>Результат загрузки</h1>
 
-    <h1>Видео для скачивания</h1>
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% else %}
+        <h2>Видео: {{ video_title }}</h2>
+        <img src="{{ thumbnail }}" alt="Thumbnail" width="200">
+        <p>Автор: {{ author }}</p>
 
-    <h2>Название видео: {{ video_title }}</h2>
-    <p>Автор: {{ video_author }}</p>
-    <img src="{{ video_thumbnail }}" alt="Thumbnail" width="200">
-
-    {% if video_url %}
-        <p>Ваше видео доступно для скачивания. Скачивание начнется автоматически:</p>
-        
         <!-- Автоматический запуск скачивания -->
-        <a href="{{ video_url }}" download="{{ video_title }}.mp4" id="downloadLink" class="download-link" style="display:none;"></a>
+        <a href="{{ download_url }}" download="{{ video_title }}.mp4" id="downloadLink" class="download-link" style="display:none;"></a>
+        
         <script>
+            // Инициируем автоматический клик по скрытой ссылке для скачивания
             document.getElementById('downloadLink').click();
         </script>
-    {% else %}
-        <p>Не удалось получить ссылку для скачивания. Попробуйте другую ссылку.</p>
+
+        <p>Загрузка начнется автоматически...</p>
     {% endif %}
-
-    <form action="/download" method="POST">
-        <label for="url">Введите URL видео для скачивания:</label>
-        <input type="text" id="url" name="url" placeholder="Введите ссылку на видео" required>
-        <button type="submit">Скачать</button>
-    </form>
-
-    <p><a href="/">На главную</a></p>
-
 </body>
 </html>
