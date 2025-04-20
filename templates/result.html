@@ -16,8 +16,8 @@
     <ul>
         {% for media in result['medias'] %}
             <li>
-                <!-- Кнопка для скачивания с имитацией клика -->
-                <button onclick="startDownload('{{ media['url'] }}', '{{ result['title'] }} - {{ media['label'] }}')">
+                <!-- Кнопка для скачивания видео через Flask-обработчик -->
+                <button onclick="downloadVideo('{{ media['url'] }}', '{{ result['title'] }} - {{ media['label'] }}')">
                     Download {{ media['label'] }}
                 </button>
             </li>
@@ -25,15 +25,9 @@
     </ul>
 
     <script>
-        function startDownload(url, filename) {
-            // Создаем элемент <a>, который будет использоваться для скачивания
-            var link = document.createElement('a');
-            link.href = url;
-            link.download = filename;  // Устанавливаем имя для скачиваемого файла
-            link.style.display = 'none';  // Делаем ссылку невидимой
-            document.body.appendChild(link);
-            link.click();  // Симулируем клик по ссылке, чтобы начать скачивание
-            document.body.removeChild(link);  // Убираем ссылку из DOM после клика
+        function downloadVideo(url, filename) {
+            // Перенаправление на маршрут Flask для скачивания видео
+            window.location.href = `/download_video?url=${encodeURIComponent(url)}`;
         }
     </script>
 
