@@ -2,23 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Download</title>
+    <title>Video Downloader</title>
 </head>
 <body>
-    <h1>Welcome to Video Download</h1>
-    <p>Select your language:</p>
+    <h1>Добро пожаловать на getvideo.live</h1>
+    
+    <p>Выберите язык:</p>
     <ul>
         <li><a href="/ru/page1">Русский</a></li>
         <li><a href="/en/page1">English</a></li>
         <li><a href="/es/page1">Español</a></li>
         <li><a href="/zh/page1">中文</a></li>
     </ul>
-    
-<h2>Download a video</h2>
-<form action="/download_video" method="get">
-    <input type="text" name="url" placeholder="Paste your video URL here" required>
-    <button type="submit">Download</button>
-</form>
+
+    <h2>Введите ссылку для загрузки видео:</h2>
+    <form action="/download" method="POST">
+        <input type="text" name="url" placeholder="https://example.com/video" required>
+        <button type="submit">Скачать</button>
+    </form>
 </body>
 </html>
