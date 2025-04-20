@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_forб send_file, Response
 import http.client
 import json
+import requests
 
 app = Flask(__name__)
 
@@ -63,6 +64,32 @@ def download():
         return render_template("result.html", result=result)
     except Exception as e:
         return f"Ошибка обработки данных: {e}"
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+app = Flask(__name__)
+
+@app.route('/download_video', methods=['GET'])
+def download_video():
+    # Получаем ссылку на видео из параметра запроса
+    video_url = request.args.get('url')
+    
+    # Пытаемся загрузить видео с источника
+    response = requests.get(video_url, stream=True)
+    
+    # Проверяем, что запрос успешен
+    if response.status_code == 200:
+        # Устанавливаем заголовки для скачивания
+        headers = {
+            'Content-Disposition': 'attachment; filename="video.mp4"',
+            'Content-Type': 'video/mp4',
+        }
+        
+        # Отправляем файл с корректными заголовками
+        return Response(response.iter_content(chunk_size=1024), headers=headers)
+
+    return "Error: Could not fetch video", 400
 
 if __name__ == '__main__':
     app.run(debug=True)
