@@ -1,68 +1,53 @@
+from flask import Flask, render_template, request
 import http.client
 import json
-from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
 RAPIDAPI_KEY = "aa3d356f13msh3974bc1b6659014p111df9jsn9a452dae36bc"
 RAPIDAPI_HOST = "auto-download-all-in-one.p.rapidapi.com"
 
-# Полный список сервисов, разделенный на 5 страниц
-routes = {
+# Разделим сервисы на страницы (5 страниц по 7 сервисов)
+services_dict = {
     "ru": [
-        ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
-        ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
-        ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
-        ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
-        ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
+        ["instagram", "tiktok", "facebook", "twitter", "youtube", "reddit", "linkedin"],
+        ["pinterest", "tumblr", "vimeo", "soundcloud", "spotify", "mixcloud", "bandcamp"],
+        ["zingmp3", "douyin", "kuaishou", "xiaohongshu", "ixigua", "meipai", "likee"],
+        ["dailymotion", "sharechat", "febspot", "9gag", "rumble", "ted", "sohutv"],
+        ["bluesky", "soundcloud", "meipai", "mixcloud", "spotify", "bandcamp", "tiktok"]
     ],
     "en": [
-        ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
-        ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
-        ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
-        ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
-        ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
+        ["instagram", "tiktok", "facebook", "twitter", "youtube", "reddit", "linkedin"],
+        ["pinterest", "tumblr", "vimeo", "soundcloud", "spotify", "mixcloud", "bandcamp"],
+        ["zingmp3", "douyin", "kuaishou", "xiaohongshu", "ixigua", "meipai", "likee"],
+        ["dailymotion", "sharechat", "febspot", "9gag", "rumble", "ted", "sohutv"],
+        ["bluesky", "soundcloud", "meipai", "mixcloud", "spotify", "bandcamp", "tiktok"]
     ],
     "es": [
-        ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
-        ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
-        ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
-        ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
-        ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
+        ["instagram", "tiktok", "facebook", "twitter", "youtube", "reddit", "linkedin"],
+        ["pinterest", "tumblr", "vimeo", "soundcloud", "spotify", "mixcloud", "bandcamp"],
+        ["zingmp3", "douyin", "kuaishou", "xiaohongshu", "ixigua", "meipai", "likee"],
+        ["dailymotion", "sharechat", "febspot", "9gag", "rumble", "ted", "sohutv"],
+        ["bluesky", "soundcloud", "meipai", "mixcloud", "spotify", "bandcamp", "tiktok"]
     ],
     "zh": [
-        ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
-        ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
-        ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
-        ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
-        ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
+        ["instagram", "tiktok", "facebook", "twitter", "youtube", "reddit", "linkedin"],
+        ["pinterest", "tumblr", "vimeo", "soundcloud", "spotify", "mixcloud", "bandcamp"],
+        ["zingmp3", "douyin", "kuaishou", "xiaohongshu", "ixigua", "meipai", "likee"],
+        ["dailymotion", "sharechat", "febspot", "9gag", "rumble", "ted", "sohutv"],
+        ["bluesky", "soundcloud", "meipai", "mixcloud", "spotify", "bandcamp", "tiktok"]
     ]
 }
 
-# Главная страница
-@app.route('/')
-def index():
-    return render_template("index.html")
-
-# SEO-страницы для каждого языка и сервиса
-for lang, services_list in routes.items():
-    for i, services in enumerate(services_list):
-        route = f"/{lang}/page{i+1}"
+# Создаем страницы для каждого языка и сервиса
+for lang, service_groups in services_dict.items():
+    for idx, services in enumerate(service_groups):
+        route = f"/{lang}/page{idx + 1}"
         def make_view(services=services, lang=lang):
             def view():
                 return render_template("seo_page.html", services=services, lang=lang)
             return view
-        app.add_url_rule(route, f"{lang}_page{i+1}", make_view())
-
-# Страница для скачивания
-from flask import Flask, render_template, request
-import http.client
-import json
-
-app = Flask(__name__)
-
-RAPIDAPI_KEY = "aa3d356f13msh3974bc1b6659014p111df9jsn9a452dae36bc"
-RAPIDAPI_HOST = "auto-download-all-in-one.p.rapidapi.com"
+        app.add_url_rule(route, f"{lang}_page{idx + 1}", make_view())
 
 @app.route('/')
 def index():
@@ -96,8 +81,14 @@ def download():
     if not video_url:
         return "Не удалось получить ссылку для скачивания. Попробуйте другую ссылку.", 400
 
+    # Извлекаем информацию о видео
+    video_title = response.get('title', 'Видео')
+    thumbnail = response.get('thumbnail', '')
+    author = response.get('author', 'Неизвестен')
+    medias = response.get('medias', [])
+
     # Отображаем результат с кнопкой для скачивания
-    return render_template('result.html', video_url=video_url, title=response.get('title', 'Видео'))
+    return render_template('result.html', video_url=video_url, title=video_title, thumbnail=thumbnail, author=author, medias=medias)
 
 if __name__ == '__main__':
     app.run(debug=True)
