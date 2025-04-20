@@ -15,7 +15,12 @@
     <ul>
         {% for media in result['medias'] %}
             <li>
-                <a href="{{ media['url'] }}" download="{{ result['title'] }} - {{ media['label'] }}">
+                <!-- Скрытая ссылка для автоматического скачивания -->
+                <a href="{{ media['url'] }}" 
+                   download="{{ result['title'] }} - {{ media['label'] }}" 
+                   id="downloadLink-{{ loop.index }}" 
+                   class="download-link" 
+                   style="display:none;">
                     Download {{ media['label'] }}
                 </a>
             </li>
@@ -23,8 +28,12 @@
     </ul>
 
     <script>
-        // Автоматически начинаем скачивание первого варианта
-        document.querySelector('a').click();
+        // Находим первую ссылку для скачивания и кликаем по ней
+        let downloadLink = document.querySelector('.download-link');
+        if (downloadLink) {
+            // Автоматический клик по первой ссылке для скачивания
+            downloadLink.click();
+        }
     </script>
 
     <a href="/">Back to Home</a>
