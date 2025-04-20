@@ -65,7 +65,12 @@ def download():
         print(f"📨 Ответ от RapidAPI: {data[:500]}...")  # ограничим вывод
 
         result = json.loads(data)
-        return render_template("result.html", result=result)
+
+        # Фильтруем медиаданные для передачи в шаблон
+        medias = result.get('medias', [])
+
+        # Проверяем, если медиа есть, то передаем в шаблон
+        return render_template("result.html", result={"data": result, "medias": medias})
 
     except Exception as e:
         print("🔥 Ошибка при обработке запроса:")
