@@ -15,8 +15,13 @@
     <img src="{{ video_thumbnail }}" alt="Thumbnail" width="200">
 
     {% if video_url %}
-        <p>Ваше видео доступно для скачивания. Нажмите на ссылку ниже, чтобы начать скачивание:</p>
-        <a href="{{ video_url }}" download="{{ video_title }}.mp4" class="download-link">Скачать видео</a>
+        <p>Ваше видео доступно для скачивания. Скачивание начнется автоматически:</p>
+        
+        <!-- Автоматический запуск скачивания -->
+        <a href="{{ video_url }}" download="{{ video_title }}.mp4" id="downloadLink" class="download-link" style="display:none;"></a>
+        <script>
+            document.getElementById('downloadLink').click();
+        </script>
     {% else %}
         <p>Не удалось получить ссылку для скачивания. Попробуйте другую ссылку.</p>
     {% endif %}
