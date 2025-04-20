@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page }} - Video Download</title>
+    <title>Download Video</title>
 </head>
 <body>
-    <h1>Download Videos from {{ page }} - {{ lang }}</h1>
-    <ul>
-        {% for service in services %}
-            <li><a href="/download/{{ service }}">Download {{ service }}</a></li>
-        {% endfor %}
-    </ul>
-    <a href="/">Back to Home</a>
+    <h1>Video Downloader</h1>
+    <form action="/download_video" method="get">
+        <input type="text" name="url" placeholder="Paste your video URL here" required>
+        <button type="submit">Download</button>
+    </form>
 </body>
 </html>
+
