@@ -25,10 +25,10 @@
     </ul>
 
     <script>
-     function downloadVideo(url, filename) {
-    // Перенаправление на маршрут Flask для скачивания видео
-    window.location.href = `/download_video?url=${encodeURIComponent(url)}`; // <- Исправили на правильный маршрут
-}
+        function downloadVideo(url, filename) {
+            // Перенаправление на маршрут Flask для скачивания видео
+            window.location.href = `/download_video?url=${encodeURIComponent(url)}`;
+        }
     </script>
 
     <a href="/">Back to Home</a>
