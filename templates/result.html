@@ -7,8 +7,16 @@
 </head>
 <body>
     <h1>Video Download Result</h1>
-    <p>Video details:</p>
-    <pre>{{ data }}</pre>
+    <p>Here are the available download options for the video:</p>
+    <p>Video URL: {{ result['url'] }}</p>
+    <p>Author: {{ result['author'] }}</p>
+    <p>Thumbnail: <img src="{{ result['thumbnail'] }}" alt="Thumbnail"></p>
+    <h3>Available Formats:</h3>
+    <ul>
+        {% for media in result['medias'] %}
+            <li><a href="{{ media['url'] }}" download>{{ media['label'] }}</a></li>
+        {% endfor %}
+    </ul>
     <a href="/">Back to Home</a>
 </body>
 </html>
