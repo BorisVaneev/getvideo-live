@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Скачать видео с {{ service|capitalize }} ({{ lang }})</h2>
+  <form action="/download" method="post">
+    <input type="text" name="url" placeholder="Вставьте ссылку на {{ service }}" required>
+    <button type="submit">Скачать</button>
+  </form>
+{% endblock %}
