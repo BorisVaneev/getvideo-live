@@ -7,21 +7,46 @@ app = Flask(__name__)
 RAPIDAPI_KEY = "aa3d356f13msh3974bc1b6659014p111df9jsn9a452dae36bc"
 RAPIDAPI_HOST = "auto-download-all-in-one.p.rapidapi.com"
 
-# 35 сервисов, делим их на 5 страниц по 7 сервисов на каждой
-services_per_page = [
-    ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
-    ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
-    ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
-    ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
-    ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
-]
+# Полный список сервисов, разделенный на 5 страниц
+routes = {
+    "ru": [
+        ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
+        ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
+        ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
+        ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
+        ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
+    ],
+    "en": [
+        ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
+        ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
+        ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
+        ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
+        ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
+    ],
+    "es": [
+        ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
+        ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
+        ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
+        ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
+        ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
+    ],
+    "zh": [
+        ["instagram", "tiktok", "douyin", "capcut", "threads", "facebook", "kuaishou"],
+        ["espn", "pinterest", "imgur", "ifunny", "reddit", "youtube", "twitter"],
+        ["vimeo", "snapchat", "dailymotion", "sharechat", "likee", "linkedin", "tumblr"],
+        ["febspot", "9gag", "rumble", "ted", "sohutv", "xiaohongshu", "ixigua"],
+        ["meipai", "bluesky", "soundcloud", "mixcloud", "spotify", "zingmp3", "bandcamp"]
+    ]
+}
 
-# языковые маршруты
-languages = ['ru', 'en', 'es', 'zh']
+# Главная страница
+@app.route('/')
+def index():
+    return render_template("index.html")
 
-# Создаем SEO-страницы для каждой страницы с сервисами на всех языках
-for lang in languages:
-    for i, services in enumerate(services_per_page):
+# SEO-страницы для каждого языка и сервиса
+for lang, services_list in routes.items():
+    for i, services in enumerate(services_list):
         route = f"/{lang}/page{i+1}"
         def make_view(services=services, lang=lang):
             def view():
@@ -29,15 +54,12 @@ for lang in languages:
             return view
         app.add_url_rule(route, f"{lang}_page{i+1}", make_view())
 
-@app.route('/')
-def index():
-    return render_template("index.html")
-
+# Страница для скачивания
 @app.route('/download', methods=['POST'])
 def download():
     video_url = request.form.get('url')
     if not video_url:
-        return render_template("index.html", error="URL не указан")
+        return "URL не указан", 400
 
     conn = http.client.HTTPSConnection(RAPIDAPI_HOST)
     payload = json.dumps({"url": video_url})
@@ -49,16 +71,27 @@ def download():
     conn.request("POST", "/v1/social/autolink", payload, headers)
     res = conn.getresponse()
     data = res.read()
-    response = json.loads(data.decode("utf-8"))
 
-    if 'medias' in response:
-        download_url = response['medias']
-        video_title = response['title']
-        thumbnail = response.get('thumbnail', '')
-        author = response.get('author', 'Неизвестен')
-        return render_template("result.html", download_url=download_url, video_title=video_title, thumbnail=thumbnail, author=author)
-    else:
-        return render_template("result.html", error="Не удалось получить ссылку для скачивания.")
+    if res.status != 200:
+        return f"Ошибка при получении данных: {data.decode('utf-8')}", 400
+
+    try:
+        video_data = json.loads(data)
+        video_url = video_data.get("medias")[0].get("url", "")
+        video_title = video_data.get("title", "video")
+        video_thumbnail = video_data.get("thumbnail", "")
+        video_medias = video_data.get("medias", [])
+
+        if not video_url:
+            return "Не удалось получить ссылку для скачивания.", 400
+
+        return render_template("result.html", 
+                               video_url=video_url, 
+                               video_title=video_title, 
+                               video_thumbnail=video_thumbnail,
+                               video_medias=video_medias)
+    except Exception as e:
+        return f"Ошибка при обработке данных: {str(e)}", 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
