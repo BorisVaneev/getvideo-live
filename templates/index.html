@@ -3,23 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная страница</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Скачивание видео</title>
 </head>
 <body>
-    <h1>Добро пожаловать на GetVideo</h1>
+    <h1>Введите ссылку на видео для скачивания</h1>
     <form action="/download" method="POST">
-        <label for="url">Введите ссылку на видео:</label>
-        <input type="text" id="url" name="url" placeholder="Введите URL видео" required>
-        <button type="submit">Скачать</button>
+        <label for="url">URL:</label>
+        <input type="text" id="url" name="url" placeholder="Введите ссылку на видео" required>
+        <button type="submit">Получить ссылку для скачивания</button>
     </form>
-
-    <h2>Выберите язык:</h2>
-    <ul>
-        <li><a href="/ru/page1">Русский</a></li>
-        <li><a href="/en/page1">English</a></li>
-        <li><a href="/es/page1">Español</a></li>
-        <li><a href="/zh/page1">中文</a></li>
-    </ul>
 </body>
 </html>
