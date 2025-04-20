@@ -1,36 +1,23 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Result</title>
+    <title>Результат</title>
 </head>
 <body>
-    <h1>Video Download Result</h1>
-    <p>Here are the available download options for the video:</p>
-    <p>Video URL: {{ result['url'] }}</p>
-    <p>Author: {{ result['author'] }}</p>
-    <p>Thumbnail: <img src="{{ result['thumbnail'] }}" alt="Thumbnail"></p>
-    
-    <h3>Available Formats:</h3>
-    <ul>
-        {% for media in result['medias'] %}
-            <li>
-                <!-- Кнопка для скачивания видео через Flask-обработчик -->
-                <button onclick="downloadVideo('{{ media['url'] }}', '{{ result['title'] }} - {{ media['label'] }}')">
-                    Download {{ media['label'] }}
-                </button>
-            </li>
-        {% endfor %}
-    </ul>
+    <h1>Видео найдено</h1>
 
-    <script>
-        function downloadVideo(url, filename) {
-            // Перенаправление на маршрут Flask для скачивания видео
-            window.location.href = `/download_video?url=${encodeURIComponent(url)}`;
-        }
-    </script>
-
-    <a href="/">Back to Home</a>
+    {% if result['data'] %}
+        <p><strong>Название:</strong> {{ result['data']['title'] }}</p>
+        <p><strong>Источник:</strong> {{ result['data']['source'] }}</p>
+        <p><strong>Скачать:</strong></p>
+        <ul>
+            {% for url in result['data']['url'] %}
+                <li><a href="{{ url_for('download_video') }}?url={{ url }}">Скачать вариант</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Не удалось получить данные.</p>
+    {% endif %}
 </body>
 </html>
