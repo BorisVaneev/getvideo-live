@@ -26,10 +26,10 @@
 
     <script>
         function startDownload(url, filename) {
-            // Создаём элемент ссылки для скачивания
             var link = document.createElement('a');
             link.href = url;
             link.download = filename;  // Устанавливаем имя файла для скачивания
+            link.style.display = 'none';  // Делаем ссылку невидимой
             document.body.appendChild(link);
             link.click();  // Симулируем клик по ссылке
             document.body.removeChild(link);  // Убираем ссылку после клика
