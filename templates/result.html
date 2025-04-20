@@ -2,42 +2,45 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Результаты скачивания</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Результаты загрузки</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <header>
-        <h1>Ссылки для скачивания</h1>
-    </header>
+    <h1>Результат</h1>
 
-    <main>
-        {% if result.status == 'success' and result.result %}
+    {% if result.url %}
+        <h2>{{ result.title }}</h2>
+        <p><strong>Источник:</strong> {{ result.source }}</p>
+        {% if result.thumbnail %}
+            <img src="{{ result.thumbnail }}" alt="thumbnail" style="max-width: 300px;">
+        {% endif %}
+
+        {% if result.medias %}
+            <h3>Ссылки на скачивание:</h3>
             <ul>
-                {% for item in result.result %}
+                {% for item in result.medias %}
                     <li>
                         <a href="{{ item.url }}" target="_blank">
-                            Скачать ({{ item.quality or 'качество неизвестно' }})
+                            Скачать ({{ item.quality or item.label or 'неизвестное качество' }})
                         </a>
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <p>Не удалось получить ссылки на скачивание. Попробуйте другую ссылку.</p>
+            <p>Медиафайлы не найдены.</p>
         {% endif %}
+    {% else %}
+        <p><strong>Ошибка:</strong> Не удалось получить ссылки на скачивание. Попробуйте другую ссылку.</p>
+    {% endif %}
 
-        <form action="{{ url_for('download') }}" method="post" style="margin-top: 20px;">
-            <label for="url">Ссылка на видео:</label><br>
-            <input type="text" id="url" name="url" placeholder="https://example.com/..." required style="width: 80%; max-width: 500px;"><br><br>
-            <button type="submit">Скачать</button>
-        </form>
+    <hr>
+    <form action="/" method="get">
+        <button type="submit">Назад</button>
+    </form>
 
-        <br>
-        <a href="{{ url_for('index') }}">← Назад на главную</a>
-
-        <hr>
-        <h3>Отладочная информация:</h3>
-        <pre style="white-space: pre-wrap;">{{ result | tojson(indent=2, ensure_ascii=False) }}</pre>
-    </main>
+    <details>
+        <summary>Отладочная информация</summary>
+        <pre>{{ result | tojson(indent=2) }}</pre>
+    </details>
 </body>
 </html>
