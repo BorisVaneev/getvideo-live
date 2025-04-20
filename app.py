@@ -1,51 +1,43 @@
 from flask import Flask, render_template, request
 import http.client
 import json
-from datetime import datetime
+import datetime
 
 app = Flask(__name__)
 
 RAPIDAPI_KEY = "aa3d356f13msh3974bc1b6659014p111df9jsn9a452dae36bc"
 RAPIDAPI_HOST = "auto-download-all-in-one.p.rapidapi.com"
 
-# SEO-группы (5 штук)
-groups = {
-    "group1": ["Instagram", "Tiktok", "Douyin", "Capcut", "Threa.ds"],
-    "group2": ["Facebook", "Kuaishou", "Espn", "Pinterest", "imgur"],
-    "group3": ["ifunny", "Reddit", "Youtube", "Twitter", "Vimeo"],
-    "group4": ["Snapchat", "Dailymotion", "Sharechat", "Likee", "Linkedin"],
-    "group5": ["Tumblr", "Febspot", "9GAG", "Rumble", "Ted", "SohuTv", "Xiaohongshu", "Ixigua", "Meipai", "Bluesky", "Soundcloud", "Mixcloud", "Spotify", "Zingmp3", "Bandcamp"]
-}
+# SEO-группы
+services = [
+    ["Instagram", "Tiktok", "Douyin", "Capcut", "Threa.ds"],
+    ["Facebook", "Kuaishou", "Espn", "Pinterest", "imgur"],
+    ["ifunny", "Reddit", "Youtube", "Twitter", "Vimeo"],
+    ["Snapchat", "Dailymotion", "Sharechat", "Likee", "Linkedin"],
+    ["Tumblr", "Febspot", "9GAG", "Rumble", "Ted", "SohuTv",
+     "Xiaohongshu", "Ixigua", "Meipai", "Bluesky",
+     "Soundcloud", "Mixcloud", "Spotify", "Zingmp3", "Bandcamp"]
+]
 
-languages = ["ru", "en", "es", "zh"]
+languages = ['ru', 'en', 'es', 'zh']
 
 @app.context_processor
 def inject_now():
-    return {'now': datetime.utcnow()}
+    return {'now': datetime.datetime.utcnow()}
 
 @app.route('/')
 def index():
-    links = []
-    for lang in languages:
-        for i, group in enumerate(groups.keys(), 1):
-            links.append({
-                "lang": lang,
-                "group": f"группа {i}" if lang == "ru" else f"group {i}",
-                "url": f"/{lang}/group{i}"
-            })
-    return render_template("index.html", links=links)
+    return render_template("index.html", languages=languages, services=services)
 
-# SEO-страницы
 for lang in languages:
-    for i, (group_key, services) in enumerate(groups.items(), 1):
+    for i, group in enumerate(services, 1):
         route = f"/{lang}/group{i}"
-        def make_view(s=services, l=lang, g=i):
+        def make_view(g=group, l=lang, n=i):
             def view():
-                return render_template("seo_page.html", services=s, lang=l, group_number=g)
+                return render_template("seo_page.html", services=g, lang=l, group_num=n)
             return view
         app.add_url_rule(route, f"{lang}_group{i}", make_view())
 
-# Загрузка видео
 @app.route('/download', methods=['POST'])
 def download():
     video_url = request.form.get('url')
@@ -64,10 +56,10 @@ def download():
     data = res.read()
 
     try:
-        result = json.loads(data.decode("utf-8"))
-        return render_template("result.html", result=result)
-    except:
-        return f"Ошибка: {data.decode('utf-8')}", 500
+        response_json = json.loads(data)
+        return render_template("result.html", result=response_json)
+    except Exception as e:
+        return render_template("result.html", result={"status": "error", "message": str(e)})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
