@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Добро пожаловать на GetVideo.Live</h1>
+
+<form action="/download" method="post" style="margin-bottom: 30px;">
+  <input type="text" name="url" placeholder="Вставьте ссылку на видео" required style="width: 70%; padding: 10px;" />
+  <button type="submit" style="padding: 10px;">Скачать</button>
+</form>
+
+<h2>Выберите группу платформ:</h2>
+<ul>
+  {% for link in links %}
+    <li>
+      <a href="{{ link.url }}">
+        {{ link.lang.upper() }} – {{ link.group }}
+      </a>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock %}
