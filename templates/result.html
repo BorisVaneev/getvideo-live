@@ -15,7 +15,7 @@
             {% if result['data']['medias'] %}
                 {% for media in result['data']['medias'] %}
                     <li>
-                        <a href="{{ media['url'] }}" download>Скачать {{ media['label'] }}</a>  <!-- медиа доступное для скачивания -->
+                        <a href="{{ media['url'] }}" download>Скачать {{ media['label'] }} ({{ media['quality'] }})</a>
                     </li>
                 {% endfor %}
             {% else %}
@@ -26,7 +26,7 @@
         <img src="{{ result['data']['thumbnail'] }}" alt="Превью видео">
     {% else %}
         <p>Не удалось получить данные:</p>
-        <pre>{{ result }}</pre>  <!-- Выведем весь результат для отладки -->
+        <pre>{{ result }}</pre>  <!-- Выводим весь результат для отладки -->
     {% endif %}
 </body>
 </html>
