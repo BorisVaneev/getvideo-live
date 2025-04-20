@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, Response, send_file
-import yt_dlp
+from flask import Flask, render_template, request, redirect, url_for, send_file, Response
+import http.client
+import json
 import requests
 
 app = Flask(__name__)
@@ -40,52 +41,37 @@ for lang, pages in SERVICES.items():
         app.add_url_rule(route, f"{lang}_{page}", make_view())
 
 # Страница загрузки
+@app.route('/download', methods=['POST'])
+def download():
+    video_url = request.form.get('url')
+    if not video_url:
+        return "URL не указан", 400
+
+    conn = http.client.HTTPSConnection(RAPIDAPI_HOST)
+    payload = json.dumps({"url": video_url})
+    headers = {
+        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-host': RAPIDAPI_HOST,
+        'Content-Type': 'application/json'
+    }
+    conn.request("POST", "/v1/social/autolink", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    
+    # Предположим, что мы получаем данные, которые нужно отобразить
+    try:
+        result = json.loads(data)
+        return render_template("result.html", result=result)
+    except Exception as e:
+        return f"Ошибка обработки данных: {e}"
+
+# Страница для скачивания видео
 @app.route('/download_video', methods=['GET'])
 def download_video():
     # Получаем ссылку на видео из параметра запроса
     video_url = request.args.get('url')
     
-    # Проверяем, с какого источника видео
-    if "youtube.com" in video_url or "youtu.be" in video_url:
-        # Используем yt-dlp для загрузки видео с YouTube
-        return download_from_youtube(video_url)
-    elif "instagram.com" in video_url:
-        # Используем yt-dlp для загрузки видео с Instagram
-        return download_from_instagram(video_url)
-    else:
-        # Для других источников
-        return download_from_other_sources(video_url)
-
-def download_from_youtube(video_url):
-    # Используем yt-dlp для получения ссылки на видео с YouTube
-    ydl_opts = {
-        'format': 'best',
-        'outtmpl': 'temp_video.mp4',  # Временно сохраняем видео на сервере
-    }
-    
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(video_url, download=True)
-        video_file = 'temp_video.mp4'  # Путь к сохраненному файлу
-    
-    # Отправляем видеофайл
-    return send_file(video_file, as_attachment=True, download_name="video.mp4")
-
-def download_from_instagram(video_url):
-    # Используем yt-dlp для получения ссылки на видео с Instagram
-    ydl_opts = {
-        'format': 'best',
-        'outtmpl': 'temp_video_instagram.mp4',  # Временно сохраняем видео на сервере
-    }
-    
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(video_url, download=True)
-        video_file = 'temp_video_instagram.mp4'  # Путь к сохраненному файлу
-    
-    # Отправляем видеофайл
-    return send_file(video_file, as_attachment=True, download_name="instagram_video.mp4")
-
-def download_from_other_sources(video_url):
-    # Для других источников, используем requests для загрузки видео
+    # Пытаемся загрузить видео с источника
     response = requests.get(video_url, stream=True)
     
     # Проверяем, что запрос успешен
@@ -100,7 +86,6 @@ def download_from_other_sources(video_url):
         return Response(response.iter_content(chunk_size=1024), headers=headers)
 
     return "Error: Could not fetch video", 400
-
 
 if __name__ == '__main__':
     app.run(debug=True)
