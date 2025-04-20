@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Результат загрузки</h2>
+
+{% if result.links %}
+  <ul>
+    {% for link in result.links %}
+      <li><a href="{{ link.url }}" target="_blank">{{ link.quality or "Скачать видео" }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Не удалось получить ссылки на скачивание. Попробуйте другую ссылку.</p>
+{% endif %}
+
+<a href="/">← Назад</a>
+{% endblock %}
