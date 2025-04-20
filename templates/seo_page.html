@@ -1,15 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
     <meta charset="UTF-8">
-    <title>Download Video</title>
+    <title>Загрузка с платформ — {{ page }}</title>
 </head>
 <body>
-<h2>Download a video</h2>
-<form action="/download_video" method="get">
-    <input type="text" name="url" placeholder="Paste your video URL here" required>
-    <button type="submit">Download</button>
-</form>
+    <h1>Загрузка видео с сервисов</h1>
+    <p>Язык: {{ lang }}</p>
+    <ul>
+        {% for service in services %}
+            <li>{{ service|capitalize }}</li>
+        {% endfor %}
+    </ul>
+
+    <form action="/download" method="POST">
+        <input type="text" name="url" placeholder="Вставьте ссылку на видео" required>
+        <button type="submit">Скачать</button>
+    </form>
 </body>
 </html>
-
