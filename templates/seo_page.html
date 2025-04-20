@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO страницы</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Скачивание видео</title>
 </head>
 <body>
-    <h1>Выберите сервис для скачивания видео</h1>
+    <h1>Сервисы для скачивания видео</h1>
+
+    <h2>Сервисы на странице {{ lang }}</h2>
     <ul>
         {% for service in services %}
-            <li><a href="/{{ lang }}/{{ service }}">{{ service }}</a></li>
+        <li><a href="/{{ lang }}/{{ service }}">{{ service }}</a></li>
         {% endfor %}
     </ul>
-    <a href="/">На главную</a>
 </body>
 </html>
-
