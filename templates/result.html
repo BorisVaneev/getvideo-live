@@ -12,8 +12,8 @@
         <p><strong>Источник:</strong> {{ result['data']['source'] }}</p>
         <p><strong>Скачать:</strong></p>
         <ul>
-            {% if result['data']['medias'] %}
-                {% for media in result['data']['medias'] %}
+            {% if medias %}
+                {% for media in medias %}
                     <li>
                         <a href="{{ media['url'] }}" download>Скачать {{ media['label'] }} ({{ media['quality'] }})</a>
                     </li>
