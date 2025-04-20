@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_forб send_file, Response
+from flask import Flask, render_template, request, redirect, url_for, send_file, Response
 import http.client
 import json
 import requests
@@ -65,11 +65,7 @@ def download():
     except Exception as e:
         return f"Ошибка обработки данных: {e}"
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
-app = Flask(__name__)
-
+# Страница для скачивания видео
 @app.route('/download_video', methods=['GET'])
 def download_video():
     # Получаем ссылку на видео из параметра запроса
