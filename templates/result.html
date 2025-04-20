@@ -12,10 +12,18 @@
         <p><strong>Источник:</strong> {{ result['data']['source'] }}</p>
         <p><strong>Скачать:</strong></p>
         <ul>
-            {% for url in result['data']['url'] %}
-                <li><a href="{{ url_for('download_video') }}?url={{ url }}">Скачать вариант</a></li>
-            {% endfor %}
+            {% if result['data']['medias'] %}
+                {% for media in result['data']['medias'] %}
+                    <li>
+                        <a href="{{ media['url'] }}" download>Скачать {{ media['label'] }}</a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>Не доступно для скачивания.</li>
+            {% endif %}
         </ul>
+        <p><strong>Превью:</strong></p>
+        <img src="{{ result['data']['thumbnail'] }}" alt="Превью видео">
     {% else %}
         <p>Не удалось получить данные.</p>
     {% endif %}
