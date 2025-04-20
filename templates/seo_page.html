@@ -1,9 +1,35 @@
 {% extends "base.html" %}
-
 {% block content %}
-  <h2>Скачать видео с {{ service|capitalize }} ({{ lang }})</h2>
+  <h2>
+    {% if lang == 'ru' %}
+      Скачать видео с сервиса {{ slug.replace('-', ' ')|capitalize }}
+    {% elif lang == 'en' %}
+      Download video from {{ slug.replace('-', ' ')|title }}
+    {% elif lang == 'es' %}
+      Descargar vídeo de {{ slug.replace('-', ' ')|title }}
+    {% elif lang == 'zh' %}
+      从{{ slug.replace('-', ' ') }}下载视频
+    {% else %}
+      Скачать видео
+    {% endif %}
+  </h2>
+
+  <p>Поддерживаемые сервисы на этой странице:</p>
+  <ul>
+    {% for s in services %}
+      <li>{{ s }}</li>
+    {% endfor %}
+  </ul>
+
   <form action="/download" method="post">
-    <input type="text" name="url" placeholder="Вставьте ссылку на {{ service }}" required>
-    <button type="submit">Скачать</button>
+    <input
+      type="text"
+      name="url"
+      placeholder="{% if lang=='ru' %}Вставьте ссылку{% elif lang=='en' %}Enter video URL{% elif lang=='es' %}Introduzca la URL{% else %}输入视频链接{% endif %}"
+      required
+    >
+    <button type="submit">
+      {% if lang=='ru' %}Скачать{% elif lang=='en' %}Download{% elif lang=='es' %}Descargar{% else %}下载{% endif %}
+    </button>
   </form>
 {% endblock %}
