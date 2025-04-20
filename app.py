@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request
 import http.client
 import json
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -15,10 +15,7 @@ def index():
 def download():
     video_url = request.form.get('url')
     if not video_url:
-        return "URL не указан", 400
-    
-    # Печатаем полученный URL для отладки
-    print(f"Получен URL: {video_url}")
+        return render_template("index.html", error="URL не указан")
 
     conn = http.client.HTTPSConnection(RAPIDAPI_HOST)
     payload = json.dumps({"url": video_url})
@@ -27,37 +24,19 @@ def download():
         'x-rapidapi-host': RAPIDAPI_HOST,
         'Content-Type': 'application/json'
     }
-    
-    try:
-        conn.request("POST", "/v1/social/autolink", payload, headers)
-        res = conn.getresponse()
-        data = res.read()
+    conn.request("POST", "/v1/social/autolink", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    response = json.loads(data.decode("utf-8"))
 
-        # Декодируем данные и выводим их для отладки
-        response_data = data.decode("utf-8")
-        print(f"Ответ от API: {response_data}")
-
-        # Пытаемся получить ссылку на скачивание
-        response_json = json.loads(response_data)
-        if 'medias' in response_json and len(response_json['medias']) > 0:
-            video_url = response_json['medias'][0]['url']
-            video_title = response_json.get('title', 'video')
-            video_author = response_json.get('author', 'Unknown')
-            video_thumbnail = response_json.get('thumbnail', '')
-            
-            # Отправляем данные на шаблон
-            return render_template("result.html", 
-                                   video_url=video_url, 
-                                   video_title=video_title, 
-                                   video_author=video_author, 
-                                   video_thumbnail=video_thumbnail)
-        else:
-            # Если ссылки для скачивания нет, возвращаем ошибку
-            return render_template("result.html", error="Не удалось получить ссылку для скачивания.")
-    except Exception as e:
-        # Если произошла ошибка при запросе, выводим её
-        print(f"Ошибка при запросе: {e}")
-        return render_template("result.html", error="Произошла ошибка при обработке запроса.")
+    if 'medias' in response:
+        download_url = response['medias'][0]['url']
+        video_title = response['title']
+        thumbnail = response.get('thumbnail', '')
+        author = response.get('author', 'Неизвестен')
+        return render_template("result.html", download_url=download_url, video_title=video_title, thumbnail=thumbnail, author=author)
+    else:
+        return render_template("result.html", error="Не удалось получить ссылку для скачивания.")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
