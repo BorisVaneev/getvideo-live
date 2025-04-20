@@ -4,6 +4,11 @@ import json
 import os
 
 app = Flask(__name__)
+import datetime
+
+@app.context_processor
+def inject_now():
+    return {'current_year': datetime.datetime.utcnow().year}
 
 # Ваш RapidAPI‑ключ и хост
 RAPIDAPI_KEY = "aa3d356f13msh3974bc1b6659014p111df9jsn9a452dae36bc"
