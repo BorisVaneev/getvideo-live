@@ -14,9 +14,19 @@
     <h3>Available Formats:</h3>
     <ul>
         {% for media in result['medias'] %}
-            <li><a href="{{ media['url'] }}" download>{{ media['label'] }}</a></li>
+            <li>
+                <a href="{{ media['url'] }}" download="{{ result['title'] }} - {{ media['label'] }}">
+                    Download {{ media['label'] }}
+                </a>
+            </li>
         {% endfor %}
     </ul>
+
+    <script>
+        // Автоматически начинаем скачивание первого варианта
+        document.querySelector('a').click();
+    </script>
+
     <a href="/">Back to Home</a>
 </body>
 </html>
