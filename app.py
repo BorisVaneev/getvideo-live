@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file, Response
-import http.client
+from flask import Flask, render_template, request, Response, redirect, url_for
 import json
 import requests
 
@@ -30,7 +29,7 @@ SERVICES = {
 def index():
     return render_template("index.html")
 
-# Динамически создаем страницы для каждого языка и сервисов
+# Динамически создаем страницы для каждого языка и группы сервисов
 for lang, pages in SERVICES.items():
     for page, services in pages.items():
         route = f"/{lang}/{page}"
@@ -40,51 +39,43 @@ for lang, pages in SERVICES.items():
             return view
         app.add_url_rule(route, f"{lang}_{page}", make_view())
 
-# Страница загрузки
+# Обработка формы — получение ссылки, запрос к RapidAPI и отображение кнопки скачивания
 @app.route('/download', methods=['POST'])
 def download():
     video_url = request.form.get('url')
     if not video_url:
         return "URL не указан", 400
 
-    conn = http.client.HTTPSConnection(RAPIDAPI_HOST)
-    payload = json.dumps({"url": video_url})
     headers = {
         'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': RAPIDAPI_HOST,
         'Content-Type': 'application/json'
     }
-    conn.request("POST", "/v1/social/autolink", payload, headers)
-    res = conn.getresponse()
-    data = res.read()
-    
-    # Предположим, что мы получаем данные, которые нужно отобразить
+    payload = json.dumps({"url": video_url})
+    response = requests.post(f"https://{RAPIDAPI_HOST}/v1/social/autolink", headers=headers, data=payload)
+
     try:
-        result = json.loads(data)
+        result = response.json()
         return render_template("result.html", result=result)
     except Exception as e:
         return f"Ошибка обработки данных: {e}"
 
-# Страница для скачивания видео
-@app.route('/download_video', methods=['GET'])
+# Обработка скачивания по прямой ссылке
+@app.route('/download_video')
 def download_video():
-    # Получаем ссылку на видео из параметра запроса
-    video_url = request.args.get('url')
-    
-    # Пытаемся загрузить видео с источника
-    response = requests.get(video_url, stream=True)
-    
-    # Проверяем, что запрос успешен
-    if response.status_code == 200:
-        # Устанавливаем заголовки для скачивания
-        headers = {
-            'Content-Disposition': 'attachment; filename="video.mp4"',
-            'Content-Type': 'video/mp4',
-        }
-        
-        # Отправляем файл с корректными заголовками
-        return Response(response.iter_content(chunk_size=1024), headers=headers)
+    direct_url = request.args.get('url')
+    if not direct_url:
+        return "No download URL provided", 400
 
+    response = requests.get(direct_url, stream=True)
+    if response.status_code == 200:
+        return Response(
+            response.iter_content(chunk_size=1024),
+            headers={
+                'Content-Disposition': 'attachment; filename="video.mp4"',
+                'Content-Type': 'video/mp4',
+            }
+        )
     return "Error: Could not fetch video", 400
 
 if __name__ == '__main__':
